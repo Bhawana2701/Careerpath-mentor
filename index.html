@@ -1,565 +1,2278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CareerPath Mentor</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'Nunito',sans-serif;background:#F0F4FF;color:#1E1B4B;overflow:hidden;height:100vh;}
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CareerPath Mentor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-  /* ── SCREENS ── */
-  .screen{display:none;height:100vh;width:100%;position:absolute;top:0;left:0;animation:fadeIn .35s ease;}
-  .screen.active{display:flex;}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    body {
+        font-family: 'Nunito', sans-serif;
+        background: #F0F4FF;
+        color: #1E1B4B;
+        overflow: hidden;
+        height: 100vh;
+    }/* ── SCREENS ── */
 
-  /* ── SPLASH ── */
-  #splash{flex-direction:column;align-items:center;justify-content:center;
-    background:linear-gradient(150deg,#4F46E5 0%,#7C3AED 50%,#A855F7 100%);}
-  .logo-wrap{text-align:center;margin-bottom:48px;}
-  .logo-icon{font-size:72px;margin-bottom:16px;display:block;animation:bounce 2s infinite;}
-  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-  .logo-title{font-family:'Merriweather',serif;font-size:34px;color:#fff;letter-spacing:-1px;}
-  .logo-sub{font-size:15px;color:#C4B5FD;margin-top:6px;letter-spacing:.5px;}
-  .tagline{font-size:18px;color:#E0D9FF;margin-bottom:48px;text-align:center;max-width:320px;line-height:1.6;}
-  .btn-primary{padding:16px 48px;background:#fff;color:#4F46E5;border:none;border-radius:50px;
-    font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.2);
-    transition:transform .15s,box-shadow .15s;font-family:'Nunito',sans-serif;}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,0,0,.28);}
-  .btn-secondary{margin-top:16px;padding:12px 36px;background:transparent;color:#C4B5FD;
-    border:2px solid rgba(255,255,255,.25);border-radius:50px;font-size:14px;font-weight:700;
-    cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;}
-  .btn-secondary:hover{border-color:#fff;color:#fff;}
+    .screen {
+        display: none;
+        height: 100vh;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        animation: fadeIn .35s ease;
+    }
 
-  /* ── ONBOARDING ── */
-  #onboarding{flex-direction:column;align-items:center;justify-content:center;
-    background:linear-gradient(150deg,#4F46E5 0%,#7C3AED 60%,#A855F7 100%);padding:32px;}
-  .ob-title{font-family:'Merriweather',serif;font-size:26px;color:#fff;text-align:center;margin-bottom:8px;}
-  .ob-sub{font-size:14px;color:#C4B5FD;text-align:center;margin-bottom:36px;}
-  .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:460px;width:100%;}
-  .user-card{background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.15);border-radius:20px;
-    padding:24px 20px;text-align:center;cursor:pointer;transition:all .2s;color:#fff;}
-  .user-card:hover,.user-card.selected{background:rgba(255,255,255,.22);border-color:#fff;transform:translateY(-3px);}
-  .user-card .card-icon{font-size:38px;display:block;margin-bottom:10px;}
-  .user-card .card-label{font-size:14px;font-weight:800;display:block;}
-  .user-card .card-desc{font-size:12px;color:#C4B5FD;margin-top:4px;display:block;}
-  .ob-next{margin-top:32px;padding:14px 48px;background:#fff;color:#4F46E5;border:none;
-    border-radius:50px;font-size:16px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;
-    transition:transform .15s;opacity:.4;pointer-events:none;}
-  .ob-next.ready{opacity:1;pointer-events:all;}
-  .ob-next.ready:hover{transform:translateY(-2px);}
+    .screen.active {
+        display: flex;
+    }
 
-  /* ── QUIZ ── */
-  #quiz{flex-direction:column;background:#fff;padding:0;}
-  .quiz-header{background:linear-gradient(90deg,#4F46E5,#7C3AED);padding:24px 32px 20px;color:#fff;}
-  .quiz-header h2{font-family:'Merriweather',serif;font-size:20px;}
-  .quiz-header p{font-size:13px;color:#C4B5FD;margin-top:4px;}
-  .progress-bar{height:4px;background:rgba(255,255,255,.2);border-radius:4px;margin-top:16px;}
-  .progress-fill{height:100%;background:#fff;border-radius:4px;transition:width .4s ease;}
-  .quiz-body{flex:1;padding:32px;overflow-y:auto;display:flex;flex-direction:column;}
-  .q-num{font-size:11px;letter-spacing:2px;color:#7C3AED;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
-  .q-text{font-size:20px;font-weight:800;color:#1E1B4B;margin-bottom:28px;line-height:1.4;}
-  .options-list{display:flex;flex-direction:column;gap:12px;flex:1;}
-  .option{padding:16px 20px;border:2px solid #E0E7FF;border-radius:14px;cursor:pointer;
-    font-size:14px;font-weight:600;color:#3730A3;transition:all .18s;background:#fff;text-align:left;
-    font-family:'Nunito',sans-serif;}
-  .option:hover,.option.chosen{background:#EEF2FF;border-color:#4F46E5;color:#4F46E5;}
-  .option.chosen{background:#4F46E5;color:#fff;border-color:#4F46E5;}
-  .quiz-footer{padding:20px 32px;border-top:1px solid #E0E7FF;display:flex;justify-content:flex-end;}
-  .btn-next-q{padding:12px 32px;background:linear-gradient(90deg,#4F46E5,#7C3AED);color:#fff;border:none;
-    border-radius:50px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;
-    opacity:.4;pointer-events:none;transition:all .15s;}
-  .btn-next-q.ready{opacity:1;pointer-events:all;}
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform:translateY(12px)
+        }
 
-  /* ── DASHBOARD ── */
-  #dashboard{flex-direction:column;background:#F0F4FF;overflow-y:auto;}
-  .dash-header{background:linear-gradient(135deg,#4F46E5,#7C3AED);padding:24px 28px 32px;color:#fff;}
-  .dash-header .greeting{font-size:13px;color:#C4B5FD;margin-bottom:4px;}
-  .dash-header h2{font-family:'Merriweather',serif;font-size:22px;}
-  .dash-header .match-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
-    border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;margin-top:8px;}
-  .dash-body{padding:20px;display:flex;flex-direction:column;gap:16px;margin-top:-16px;}
-  .section-title{font-size:13px;font-weight:800;color:#6B7280;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
-  .career-cards{display:flex;flex-direction:column;gap:12px;}
-  .career-card{background:#fff;border-radius:18px;padding:20px;display:flex;align-items:center;gap:16px;
-    box-shadow:0 2px 12px rgba(79,70,229,.08);cursor:pointer;transition:transform .15s,box-shadow .15s;border:2px solid transparent;}
-  .career-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(79,70,229,.15);border-color:#E0E7FF;}
-  .career-card.top{border-color:#4F46E5;}
-  .cc-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
-  .cc-info{flex:1;}
-  .cc-title{font-size:16px;font-weight:800;color:#1E1B4B;margin-bottom:2px;}
-  .cc-sub{font-size:12px;color:#6B7280;}
-  .cc-match{font-size:13px;font-weight:800;color:#4F46E5;}
-  .pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:6px;}
-  .pill-green{background:#D1FAE5;color:#065F46;}
-  .pill-blue{background:#EEF2FF;color:#3730A3;}
-  .quick-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .stat-card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
-  .stat-icon{font-size:22px;margin-bottom:6px;}
-  .stat-num{font-size:22px;font-weight:900;color:#4F46E5;}
-  .stat-label{font-size:11px;color:#9CA3AF;font-weight:600;margin-top:2px;}
-  .btn-roadmap{width:100%;padding:16px;background:linear-gradient(90deg,#4F46E5,#7C3AED);color:#fff;
-    border:none;border-radius:16px;font-size:16px;font-weight:800;cursor:pointer;
-    font-family:'Nunito',sans-serif;transition:transform .15s;}
-  .btn-roadmap:hover{transform:translateY(-2px);}
+        to {
+            opacity: 1;
+            transform: translateY(0)
+        }
+    }/* ── SPLASH ── */
 
-  /* ── ROADMAP ── */
-  #roadmap{flex-direction:column;background:#F0F4FF;overflow-y:auto;}
-  .roadmap-header{background:linear-gradient(135deg,#0D9488,#059669);padding:24px 28px 32px;color:#fff;}
-  .roadmap-header .back-btn{font-size:13px;color:rgba(255,255,255,.7);cursor:pointer;margin-bottom:12px;display:inline-block;}
-  .roadmap-header .back-btn:hover{color:#fff;}
-  .roadmap-header h2{font-family:'Merriweather',serif;font-size:22px;}
-  .roadmap-header p{font-size:13px;color:#A7F3D0;margin-top:4px;}
-  .roadmap-body{padding:20px;margin-top:-16px;}
-  .timeline{position:relative;padding-left:32px;}
-  .timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#4F46E5,#7C3AED,#A855F7,#EC4899);}
-  .tl-item{position:relative;margin-bottom:20px;}
-  .tl-dot{position:absolute;left:-26px;top:16px;width:14px;height:14px;border-radius:50%;
-    background:#4F46E5;border:3px solid #fff;box-shadow:0 0 0 2px #4F46E5;}
-  .tl-dot.done{background:#10B981;box-shadow:0 0 0 2px #10B981;}
-  .tl-card{background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 2px 12px rgba(0,0,0,.06);cursor:pointer;transition:all .15s;}
-  .tl-card:hover{transform:translateX(4px);}
-  .tl-card.done-card{opacity:.7;}
-  .tl-step{font-size:10px;letter-spacing:1.5px;color:#7C3AED;font-weight:700;text-transform:uppercase;margin-bottom:4px;}
-  .tl-title{font-size:15px;font-weight:800;color:#1E1B4B;margin-bottom:4px;}
-  .tl-desc{font-size:12px;color:#6B7280;line-height:1.5;}
-  .tl-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;}
-  .tl-tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#EEF2FF;color:#3730A3;}
-  .tl-check{float:right;font-size:18px;cursor:pointer;}
+    #splash {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(150deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%);
+    }
 
-  /* NAV BAR */
-  .nav-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #E0E7FF;
-    display:flex;justify-content:space-around;padding:10px 0 16px;z-index:100;}
-  .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
-    font-size:10px;font-weight:700;color:#9CA3AF;transition:color .15s;}
-  .nav-item.active{color:#4F46E5;}
-  .nav-item span:first-child{font-size:22px;}
+    .logo-wrap {
+        text-align: center;
+        margin-bottom: 48px;
+    }
 
-  /* util */
-  .hidden{display:none!important;}
-</style>
+    .logo-icon {
+        font-size: 72px;
+        margin-bottom: 16px;
+        display: block;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform:translateY(0)
+        }
+
+        50% {
+            transform: translateY(-10px)
+        }
+    }
+
+    .logo-title {
+        font-family: 'Merriweather', serif;
+        font-size: 34px;
+        color: #fff;
+        letter-spacing: -1px;
+    }
+
+    .logo-sub {
+        font-size: 15px;
+        color: #C4B5FD;
+        margin-top: 6px;
+        letter-spacing: .5px;
+    }
+
+    .tagline {
+        font-size: 18px;
+        color: #E0D9FF;
+        margin-bottom: 48px;
+        text-align: center;
+        max-width: 320px;
+        line-height: 1.6;
+    }
+
+    .btn-primary {
+        padding: 16px 48px;
+        background: #fff;
+        color: #4F46E5;
+        border: none;
+        border-radius: 50px;
+        font-size: 17px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, .2);
+        transition: transform .15s, box-shadow .15s;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, .28);
+    }
+
+    .btn-secondary {
+        margin-top: 16px;
+        padding: 12px 36px;
+        background: transparent;
+        color: #C4B5FD;
+        border: 2px solid rgba(255, 255, 255, .25);
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        transition: all .15s;
+    }
+
+    .btn-secondary:hover {
+        border-color: #fff;
+        color: #fff;
+    }/* ── ONBOARDING ── */
+
+    #onboarding {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(150deg, #4F46E5 0%, #7C3AED 60%, #A855F7 100%);
+        padding: 32px;
+    }
+
+    .ob-title {
+        font-family: 'Merriweather', serif;
+        font-size: 26px;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .ob-sub {
+        font-size: 14px;
+        color: #C4B5FD;
+        text-align: center;
+        margin-bottom: 36px;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        max-width: 460px;
+        width: 100%;
+    }
+
+    .user-card {
+        background: rgba(255, 255, 255, .1);
+        border: 2px solid rgba(255, 255, 255, .15);
+        border-radius: 20px;
+        padding: 24px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all .2s;
+        color: #fff;
+    }
+
+    .user-card:hover, .user-card.selected {
+        background: rgba(255, 255, 255, .22);
+        border-color: #fff;
+        transform: translateY(-3px);
+    }
+
+    .user-card .card-icon {
+        font-size: 38px;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .user-card .card-label {
+        font-size: 14px;
+        font-weight: 800;
+        display: block;
+    }
+
+    .user-card .card-desc {
+        font-size: 12px;
+        color: #C4B5FD;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .ob-next {
+        margin-top: 32px;
+        padding: 14px 48px;
+        background: #fff;
+        color: #4F46E5;
+        border: none;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        transition: transform .15s;
+        opacity: .4;
+        pointer-events: none;
+    }
+
+    .ob-next.ready {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .ob-next.ready:hover {
+        transform: translateY(-2px);
+    }/* ── QUIZ ── */
+
+    #quiz {
+        flex-direction: column;
+        background: #fff;
+        padding: 0;
+    }
+
+    .quiz-header {
+        background: linear-gradient(90deg, #4F46E5, #7C3AED);
+        padding: 24px 32px 20px;
+        color: #fff;
+    }
+
+    .quiz-header h2 {
+        font-family: 'Merriweather', serif;
+        font-size: 20px;
+    }
+
+    .quiz-header p {
+        font-size: 13px;
+        color: #C4B5FD;
+        margin-top: 4px;
+    }
+
+    .progress-bar {
+        height: 4px;
+        background: rgba(255, 255, 255, .2);
+        border-radius: 4px;
+        margin-top: 16px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #fff;
+        border-radius: 4px;
+        transition: width .4s ease;
+    }
+
+    .quiz-body {
+        flex: 1;
+        padding: 32px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .q-num {
+        font-size: 11px;
+        letter-spacing: 2px;
+        color: #7C3AED;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .q-text {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1E1B4B;
+        margin-bottom: 28px;
+        line-height: 1.4;
+    }
+
+    .options-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        flex: 1;
+    }
+
+    .option {
+        padding: 16px 20px;
+        border: 2px solid #E0E7FF;
+        border-radius: 14px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: #3730A3;
+        transition: all .18s;
+        background: #fff;
+        text-align: left;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .option:hover, .option.chosen {
+        background: #EEF2FF;
+        border-color: #4F46E5;
+        color: #4F46E5;
+    }
+
+    .option.chosen {
+        background: #4F46E5;
+        color: #fff;
+        border-color: #4F46E5;
+    }
+
+    .quiz-footer {
+        padding: 20px 32px;
+        border-top: 1px solid #E0E7FF;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn-next-q {
+        padding: 12px 32px;
+        background: linear-gradient(90deg, #4F46E5, #7C3AED);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        opacity: .4;
+        pointer-events: none;
+        transition: all .15s;
+    }
+
+    .btn-next-q.ready {
+        opacity: 1;
+        pointer-events: all;
+    }/* ── DASHBOARD ── */
+
+    #dashboard {
+        flex-direction: column;
+        background: #F0F4FF;
+        overflow-y: auto;
+    }
+
+    .dash-header {
+        background: linear-gradient(135deg, #4F46E5, #7C3AED);
+        padding: 24px 28px 20px;
+        color: #fff;
+    }
+
+    .dash-header .greeting {
+        font-size: 13px;
+        color: #C4B5FD;
+        margin-bottom: 4px;
+    }
+
+    .dash-header h2 {
+        font-family: 'Merriweather', serif;
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    .dash-header .match-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, .15);
+        border: 1px solid rgba(255, 255, 255, .25);
+        border-radius: 20px;
+        padding: 4px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }/* ── SEARCH BAR ── */
+
+    .search-container {
+        position: relative;
+        margin-top: 4px;
+    }
+
+    .search-container input {
+        width: 100%;
+        padding: 11px 16px 11px 40px;
+        background: rgba(255, 255, 255, .15);
+        border: 1.5px solid rgba(255, 255, 255, .25);
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        font-family: 'Nunito', sans-serif;
+        outline: none;
+        transition: all .2s;
+    }
+
+    .search-container input::placeholder {
+        color: rgba(255, 255, 255, .55);
+    }
+
+    .search-container input:focus {
+        background: rgba(255, 255, 255, .22);
+        border-color: rgba(255, 255, 255, .6);
+    }
+
+    .search-icon-wrap {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        pointer-events: none;
+    }
+
+    .search-clear {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, .25);
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        font-size: 11px;
+        color: #fff;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+    }
+
+    .search-clear.visible {
+        display: flex;
+    }/* Search results overlay */
+
+    .search-results-panel {
+        display: none;
+        background: #fff;
+        border-radius: 16px;
+        margin: 12px 28px 0;
+        box-shadow: 0 8px 32px rgba(79, 70, 229, .18);
+        overflow: hidden;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 50;
+    }
+
+    .search-results-panel.open {
+        display: block;
+    }
+
+    .srp-header {
+        padding: 12px 16px 8px;
+        border-bottom: 1px solid #E0E7FF;
+    }
+
+    .srp-label {
+        font-size: 11px;
+        font-weight: 800;
+        color: #7C3AED;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .srp-result {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid #F3F4F6;
+        transition: background .15s;
+    }
+
+    .srp-result:last-child {
+        border-bottom: none;
+    }
+
+    .srp-result:hover {
+        background: #F5F3FF;
+    }
+
+    .srp-ico {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .srp-info {
+        flex: 1;
+    }
+
+    .srp-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #1E1B4B;
+    }
+
+    .srp-sub {
+        font-size: 12px;
+        color: #9CA3AF;
+        margin-top: 2px;
+    }
+
+    .srp-arrow {
+        font-size: 16px;
+        color: #C4B5FD;
+    }
+
+    .srp-empty {
+        padding: 32px 16px;
+        text-align: center;
+    }
+
+    .srp-empty-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .srp-empty-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #1E1B4B;
+        margin-bottom: 4px;
+    }
+
+    .srp-empty-sub {
+        font-size: 12px;
+        color: #9CA3AF;
+    }/* Filter chips */
+
+    .filter-row {
+        padding: 14px 28px 0;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .filter-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .fchip {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        background: #fff;
+        border: 1.5px solid #E0E7FF;
+        cursor: pointer;
+        color: #6B7280;
+        white-space: nowrap;
+        transition: all .15s;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .fchip:hover, .fchip.active {
+        background: #4F46E5;
+        color: #fff;
+        border-color: #4F46E5;
+    }
+
+    .dash-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding-bottom: 90px;
+        position: relative;
+    }
+
+    .section-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #6B7280;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .career-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .career-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 2px 12px rgba(79, 70, 229, .08);
+        cursor: pointer;
+        transition: transform .15s, box-shadow .15s;
+        border: 2px solid transparent;
+    }
+
+    .career-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(79, 70, 229, .15);
+        border-color: #E0E7FF;
+    }
+
+    .career-card.top {
+        border-color: #4F46E5;
+    }
+
+    .cc-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        flex-shrink: 0;
+    }
+
+    .cc-info {
+        flex: 1;
+    }
+
+    .cc-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1E1B4B;
+        margin-bottom: 2px;
+    }
+
+    .cc-sub {
+        font-size: 12px;
+        color: #6B7280;
+    }
+
+    .cc-match {
+        font-size: 13px;
+        font-weight: 800;
+        color: #4F46E5;
+    }
+
+    .pill {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        margin-top: 6px;
+    }
+
+    .pill-green {
+        background: #D1FAE5;
+        color: #065F46;
+    }
+
+    .pill-blue {
+        background: #EEF2FF;
+        color: #3730A3;
+    }
+
+    .quick-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+    }
+
+    .stat-icon {
+        font-size: 22px;
+        margin-bottom: 6px;
+    }
+
+    .stat-num {
+        font-size: 22px;
+        font-weight: 900;
+        color: #4F46E5;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        color: #9CA3AF;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+
+    .btn-roadmap {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(90deg, #4F46E5, #7C3AED);
+        color: #fff;
+        border: none;
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        transition: transform .15s;
+    }
+
+    .btn-roadmap:hover {
+        transform: translateY(-2px);
+    }/* ── ROADMAP ── */
+
+    #roadmap {
+        flex-direction: column;
+        background: #F0F4FF;
+        overflow-y: auto;
+    }
+
+    .roadmap-header {
+        background: linear-gradient(135deg, #0D9488, #059669);
+        padding: 24px 28px 32px;
+        color: #fff;
+    }
+
+    .roadmap-header .back-btn {
+        font-size: 13px;
+        color: rgba(255, 255, 255, .7);
+        cursor: pointer;
+        margin-bottom: 12px;
+        display: inline-block;
+    }
+
+    .roadmap-header .back-btn:hover {
+        color: #fff;
+    }
+
+    .roadmap-header h2 {
+        font-family: 'Merriweather', serif;
+        font-size: 22px;
+    }
+
+    .roadmap-header p {
+        font-size: 13px;
+        color: #A7F3D0;
+        margin-top: 4px;
+    }
+
+    .roadmap-body {
+        padding: 20px;
+        margin-top: -16px;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 32px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 12px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #4F46E5, #7C3AED, #A855F7, #EC4899);
+    }
+
+    .tl-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .tl-dot {
+        position: absolute;
+        left: -26px;
+        top: 16px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #4F46E5;
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 2px #4F46E5;
+    }
+
+    .tl-dot.done {
+        background: #10B981;
+        box-shadow: 0 0 0 2px #10B981;
+    }
+
+    .tl-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 18px 20px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+        cursor: pointer;
+        transition: all .15s;
+    }
+
+    .tl-card:hover {
+        transform: translateX(4px);
+    }
+
+    .tl-card.done-card {
+        opacity: .7;
+    }
+
+    .tl-step {
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        color: #7C3AED;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .tl-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #1E1B4B;
+        margin-bottom: 4px;
+    }
+
+    .tl-desc {
+        font-size: 12px;
+        color: #6B7280;
+        line-height: 1.5;
+    }
+
+    .tl-tags {
+        margin-top: 10px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .tl-tag {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        background: #EEF2FF;
+        color: #3730A3;
+    }
+
+    .tl-check {
+        float: right;
+        font-size: 18px;
+        cursor: pointer;
+    }/* ── SEARCH ROADMAP SCREEN ── */
+
+    #search-roadmap {
+        flex-direction: column;
+        background: #F0F4FF;
+        overflow-y: auto;
+    }
+
+    .sr-header {
+        background: linear-gradient(135deg, #7C3AED, #A855F7);
+        padding: 24px 28px 32px;
+        color: #fff;
+    }
+
+    .sr-header .back-btn {
+        font-size: 13px;
+        color: rgba(255, 255, 255, .7);
+        cursor: pointer;
+        margin-bottom: 12px;
+        display: inline-block;
+    }
+
+    .sr-header .back-btn:hover {
+        color: #fff;
+    }
+
+    .sr-header h2 {
+        font-family: 'Merriweather', serif;
+        font-size: 22px;
+    }
+
+    .sr-header p {
+        font-size: 13px;
+        color: #E9D5FF;
+        margin-top: 4px;
+    }/* NAV BAR */
+
+    .nav-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid #E0E7FF;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0 16px;
+        z-index: 100;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        cursor: pointer;
+        font-size: 10px;
+        font-weight: 700;
+        color: #9CA3AF;
+        transition: color .15s;
+    }
+
+    .nav-item.active {
+        color: #4F46E5;
+    }
+
+    .nav-item span:first-child {
+        font-size: 22px;
+    }/* util */
+
+    .hidden {
+        display: none !important;
+    }/* Search suggestion chips */
+
+    .suggestions {
+        padding: 10px 28px 0;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .sug-chip {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        background: rgba(255, 255, 255, .15);
+        border: 1px solid rgba(255, 255, 255, .2);
+        color: rgba(255, 255, 255, .85);
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        transition: all .15s;
+    }
+
+    .sug-chip:hover {
+        background: rgba(255, 255, 255, .25);
+        color: #fff;
+    }
+    </style>
 </head>
 <body>
 
-<!-- ══════════ SPLASH ══════════ -->
-<div class="screen active" id="splash">
-  <div class="logo-wrap">
-    <span class="logo-icon">🧭</span>
-    <div class="logo-title">CareerPath Mentor</div>
-    <div class="logo-sub">Your Personal Career Guide</div>
-  </div>
-  <p class="tagline">Find the right career. Get a clear roadmap. Achieve your goals.</p>
-  <button class="btn-primary" onclick="go('onboarding')">Get Started</button>
-  <button class="btn-secondary" onclick="go('onboarding')">I already have an account</button>
-</div>
-
-<!-- ══════════ ONBOARDING ══════════ -->
-<div class="screen" id="onboarding">
-  <div class="ob-title">Who are you?</div>
-  <div class="ob-sub">We'll personalise your experience just for you</div>
-  <div class="cards-grid">
-    <div class="user-card" onclick="selectUser(this,'school')">
-      <span class="card-icon">🎒</span>
-      <span class="card-label">School Student</span>
-      <span class="card-desc">Exploring what I want to do</span>
-    </div>
-    <div class="user-card" onclick="selectUser(this,'college')">
-      <span class="card-icon">🎓</span>
-      <span class="card-label">College Student</span>
-      <span class="card-desc">Figuring out my career path</span>
-    </div>
-    <div class="user-card" onclick="selectUser(this,'professional')">
-      <span class="card-icon">💼</span>
-      <span class="card-label">Professional</span>
-      <span class="card-desc">Growing in my current field</span>
-    </div>
-    <div class="user-card" onclick="selectUser(this,'switcher')">
-      <span class="card-icon">🔄</span>
-      <span class="card-label">Career Switcher</span>
-      <span class="card-desc">Ready for something new</span>
-    </div>
-  </div>
-  <button class="ob-next" id="ob-next-btn" onclick="go('quiz')">Continue →</button>
-</div>
-
-<!-- ══════════ QUIZ ══════════ -->
-<div class="screen" id="quiz">
-  <div class="quiz-header">
-    <h2 id="quiz-header-title">Career Quiz</h2>
-    <p id="quiz-header-sub">Answer a few questions so we can find your best matches</p>
-    <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:20%"></div></div>
-  </div>
-  <div class="quiz-body" id="quiz-body">
-    <!-- injected by JS -->
-  </div>
-  <div class="quiz-footer">
-    <button class="btn-next-q" id="quiz-next-btn" onclick="nextQuestion()">Next →</button>
-  </div>
-</div>
-
-<!-- ══════════ DASHBOARD ══════════ -->
-<div class="screen" id="dashboard">
-  <div class="dash-header">
-    <div class="greeting" id="dash-greeting">👋 Welcome!</div>
-    <h2 id="dash-title">Your Career Matches</h2>
-    <span class="match-badge" id="dash-badge">✨ Based on your quiz results</span>
-  </div>
-  <div class="dash-body">
-    <div class="quick-stats">
-      <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-num">3</div><div class="stat-label">Careers Matched</div></div>
-      <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-num">12</div><div class="stat-label">Resources Ready</div></div>
-      <div class="stat-card"><div class="stat-icon">🗺️</div><div class="stat-num">5</div><div class="stat-label">Roadmap Steps</div></div>
-      <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-num">0%</div><div class="stat-label">Journey Started</div></div>
-    </div>
-
-    <div>
-      <div class="section-title">Top Matches For You</div>
-      <div id="dash-career-cards"></div>
-    </div>
-
-    <button class="btn-roadmap" onclick="go('roadmap')">View My Roadmap →</button>
-  </div>
-
-  <div class="nav-bar">
-    <div class="nav-item active"><span>🏠</span><span>Home</span></div>
-    <div class="nav-item" onclick="go('roadmap')"><span>🗺️</span><span>Roadmap</span></div>
-    <div class="nav-item"><span>📚</span><span>Library</span></div>
-    <div class="nav-item"><span>👤</span><span>Profile</span></div>
-  </div>
-</div>
-
-<!-- ══════════ ROADMAP ══════════ -->
-<div class="screen" id="roadmap">
-  <div class="roadmap-header">
-    <div class="back-btn" onclick="go('dashboard')">← Back to Dashboard</div>
-    <h2 id="roadmap-title">UX Designer Roadmap</h2>
-    <p id="roadmap-sub">Your step-by-step path</p>
-  </div>
-  <div class="roadmap-body" style="padding-bottom:80px">
-    <div class="timeline" id="roadmap-timeline">
-
-      <div class="tl-item">
-        <div class="tl-dot done"></div>
-        <div class="tl-card done-card">
-          <div class="tl-step">Step 1 · Foundation</div>
-          <div class="tl-title">✅ Understand What UX Is</div>
-          <div class="tl-desc">Learn the basics of User Experience design — what it means, why it matters, and how designers think.</div>
-          <div class="tl-tags"><span class="tl-tag">Free</span><span class="tl-tag">2–3 hrs</span></div>
+    <!-- ══════════ SPLASH ══════════ -->
+    <div class="screen active" id="splash">
+        <div class="logo-wrap">
+            <span class="logo-icon">🧭</span>
+            <div class="logo-title">CareerPath Mentor</div>
+            <div class="logo-sub">Your Personal Career Guide</div>
         </div>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-card">
-          <div class="tl-step">Step 2 · Tools</div>
-          <div class="tl-title">Learn Figma (Design Tool)</div>
-          <div class="tl-desc">Figma is the industry standard tool for UX design. Start with basics: frames, components, prototyping.</div>
-          <div class="tl-tags"><span class="tl-tag">Free</span><span class="tl-tag">1–2 weeks</span><span class="tl-tag">YouTube + Figma.com</span></div>
-        </div>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-card">
-          <div class="tl-step">Step 3 · Skills</div>
-          <div class="tl-title">Study User Research Methods</div>
-          <div class="tl-desc">Learn how to run user interviews, create surveys, and build empathy maps to understand users deeply.</div>
-          <div class="tl-tags"><span class="tl-tag">Free–Paid</span><span class="tl-tag">2 weeks</span><span class="tl-tag">Coursera</span></div>
-        </div>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-card">
-          <div class="tl-step">Step 4 · Practice</div>
-          <div class="tl-title">Build 2–3 Portfolio Projects</div>
-          <div class="tl-desc">Redesign an existing app or solve a real problem. Document your process: research → wireframes → prototype.</div>
-          <div class="tl-tags"><span class="tl-tag">1–2 months</span><span class="tl-tag">Self-driven</span></div>
-        </div>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot"></div>
-        <div class="tl-card">
-          <div class="tl-step">Step 5 · Certification</div>
-          <div class="tl-title">Get Google UX Design Certificate</div>
-          <div class="tl-desc">A 6-month Google course on Coursera. Industry-recognised and beginner-friendly. Highly recommended.</div>
-          <div class="tl-tags"><span class="tl-tag">Paid</span><span class="tl-tag">6 months</span><span class="tl-tag">Coursera</span></div>
-        </div>
-      </div>
-
+        <p class="tagline">Find the right career. Get a clear roadmap. Achieve your goals.</p>
+        <button class="btn-primary" onclick="go('onboarding')">Get Started</button>
+        <button class="btn-secondary" onclick="go('onboarding')">I already have an account</button>
     </div>
-  </div>
 
-  <div class="nav-bar">
-    <div class="nav-item" onclick="go('dashboard')"><span>🏠</span><span>Home</span></div>
-    <div class="nav-item active"><span>🗺️</span><span>Roadmap</span></div>
-    <div class="nav-item"><span>📚</span><span>Library</span></div>
-    <div class="nav-item"><span>👤</span><span>Profile</span></div>
-  </div>
-</div>
+    <!-- ══════════ ONBOARDING ══════════ -->
+    <div class="screen" id="onboarding">
+        <div class="ob-title">Who are you?</div>
+        <div class="ob-sub">We'll personalise your experience just for you</div>
+        <div class="cards-grid">
+            <div class="user-card" onclick="selectUser(this,'school')">
+                <span class="card-icon">🎒</span>
+                <span class="card-label">School Student</span>
+                <span class="card-desc">Exploring what I want to do</span>
+            </div>
+            <div class="user-card" onclick="selectUser(this,'college')">
+                <span class="card-icon">🎓</span>
+                <span class="card-label">College Student</span>
+                <span class="card-desc">Figuring out my career path</span>
+            </div>
+            <div class="user-card" onclick="selectUser(this,'professional')">
+                <span class="card-icon">💼</span>
+                <span class="card-label">Professional</span>
+                <span class="card-desc">Growing in my current field</span>
+            </div>
+            <div class="user-card" onclick="selectUser(this,'switcher')">
+                <span class="card-icon">🔄</span>
+                <span class="card-label">Career Switcher</span>
+                <span class="card-desc">Ready for something new</span>
+            </div>
+        </div>
+        <button class="ob-next" id="ob-next-btn" onclick="go('quiz')">Continue →</button>
+    </div>
 
-<script>
-// ════════════════════════════════════════════
-//  PER-USER-TYPE DATA
-// ════════════════════════════════════════════
-const userData = {
-  school: {
-    label: "School Student",
-    greeting: "Hey there, future achiever! 👋",
-    dashTitle: "Careers You Could Love",
-    badge: "✨ Based on your interests & strengths",
-    quizIntro: "Let's find out what excites your curious mind",
-    questions: [
-      { q: "Which subject do you enjoy most in school?",
-        opts: ["🎨 Art & Creative subjects", "🔢 Maths & Science", "📖 Languages & Literature", "⚽ Sports & Physical Education"] },
-      { q: "What do you love doing after school?",
-        opts: ["Drawing, building or making things", "Reading, writing or researching", "Playing games or solving puzzles", "Helping friends or volunteering"] },
-      { q: "How do your teachers describe you?",
-        opts: ["Creative and imaginative", "Logical and sharp", "Caring and empathetic", "Energetic and a natural leader"] },
-      { q: "Which school project would you enjoy most?",
-        opts: ["Designing a poster or video", "Building a science experiment", "Writing a story or poem", "Organising a school event"] },
-      { q: "What do you dream of doing one day?",
-        opts: ["Create something people love", "Discover or invent something new", "Help people or change the world", "Lead a team or run something big"] },
-    ],
-    careers: [
-      { icon: "🎨", bg: "#FEF3C7", title: "Graphic Designer", sub: "Art · Creativity · Technology", match: 92, top: true },
-      { icon: "🔬", bg: "#D1FAE5", title: "Scientist / Researcher", sub: "Science · Discovery · Innovation", match: 85, top: false },
-      { icon: "✍️", bg: "#EEF2FF", title: "Content Creator", sub: "Writing · Media · Communication", match: 78, top: false },
-    ],
-    roadmapTitle: "Graphic Designer",
-    roadmapSub: "Your path from school to a creative career",
-    roadmapSteps: [
-      { step: "Step 1 · Explore", title: "Learn What Graphic Design Is", desc: "Watch YouTube videos and look at design portfolios on Behance or Dribbble. Understand what designers actually do every day.", tags: ["Free", "1 week"], done: true },
-      { step: "Step 2 · Tools", title: "Start with Canva (Free & Easy)", desc: "Canva is perfect for beginners. Create posters, social media graphics, and presentations. No experience needed.", tags: ["Free", "2 weeks"] },
-      { step: "Step 3 · Learn", title: "Take a Free Design Course", desc: "Try Google's free 'Fundamentals of Digital Marketing' or a basic design course on Coursera or YouTube.", tags: ["Free", "1 month"] },
-      { step: "Step 4 · Practice", title: "Design 5 Personal Projects", desc: "Redesign a school notice, make a poster for a cause you care about, create a logo for a fictional brand.", tags: ["Self-driven", "Ongoing"] },
-      { step: "Step 5 · Plan", title: "Choose the Right College Course", desc: "Look for B.Des (Bachelor of Design), Fine Arts, or Mass Communication courses in your country after 12th grade.", tags: ["Research needed", "Before Class 12"] },
-    ],
-  },
+    <!-- ══════════ QUIZ ══════════ -->
+    <div class="screen" id="quiz">
+        <div class="quiz-header">
+            <h2 id="quiz-header-title">Career Quiz</h2>
+            <p id="quiz-header-sub">Answer a few questions so we can find your best matches</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="quiz-progress" style="width:20%"></div>
+            </div>
+        </div>
+        <div class="quiz-body" id="quiz-body"></div>
+        <div class="quiz-footer">
+            <button class="btn-next-q" id="quiz-next-btn" onclick="nextQuestion()">Next →</button>
+        </div>
+    </div>
 
-  college: {
-    label: "College Student",
-    greeting: "Welcome, future professional! 🎓",
-    dashTitle: "Your Best Career Matches",
-    badge: "✨ Matched to your skills & interests",
-    quizIntro: "Tell us about yourself — we'll find your perfect fit",
-    questions: [
-      { q: "What's your current field of study?",
-        opts: ["💻 Engineering / Technology", "🎨 Design / Arts / Media", "📊 Business / Commerce / Finance", "🔬 Science / Healthcare / Research"] },
-      { q: "What kind of internship would excite you?",
-        opts: ["Building apps or tech products", "Designing or creating content", "Analysing data or managing projects", "Working with clients or in healthcare"] },
-      { q: "How do you prefer to work?",
-        opts: ["Independently, deep in code or design", "Collaborating in a creative team", "Leading projects and coordinating people", "Researching and solving complex problems"] },
-      { q: "What matters most to you in a career?",
-        opts: ["High salary & fast growth", "Creative freedom & expression", "Making a positive impact", "Stability & work-life balance"] },
-      { q: "Where do you want to be in 3 years?",
-        opts: ["At a top tech or design company", "Running my own startup or freelancing", "In a management or leadership role", "Pursuing further studies or research"] },
-    ],
-    careers: [
-      { icon: "💻", bg: "#EEF2FF", title: "UX Designer", sub: "Design · Technology · Creativity", match: 94, top: true },
-      { icon: "📊", bg: "#FEF3C7", title: "Data Analyst", sub: "Analytics · Problem Solving · Tech", match: 87, top: false },
-      { icon: "🚀", bg: "#F0FDF4", title: "Product Manager", sub: "Strategy · Leadership · Tech", match: 81, top: false },
-    ],
-    roadmapTitle: "UX Designer",
-    roadmapSub: "From college to your first design job",
-    roadmapSteps: [
-      { step: "Step 1 · Foundation", title: "Understand UX Design Principles", desc: "Read 'Don't Make Me Think' by Steve Krug. Watch UX crash courses on YouTube. Learn the design thinking process.", tags: ["Free", "1 week"], done: true },
-      { step: "Step 2 · Tools", title: "Master Figma", desc: "Figma is the industry standard. Learn frames, auto-layout, components, and interactive prototyping.", tags: ["Free", "2–3 weeks"] },
-      { step: "Step 3 · Skills", title: "Learn User Research Methods", desc: "Study how to run user interviews, usability tests, and create user personas. Practice on classmates.", tags: ["Free", "2 weeks"] },
-      { step: "Step 4 · Portfolio", title: "Build 3 Case Study Projects", desc: "Do a full UX project: research → wireframes → prototype → test. Document everything. Upload to a portfolio site.", tags: ["1–2 months", "Self-driven"] },
-      { step: "Step 5 · Certify", title: "Google UX Design Certificate", desc: "A globally recognised 6-month program on Coursera. Highly valued by employers. Apply for jobs right after.", tags: ["Paid", "6 months", "Coursera"] },
-    ],
-  },
+    <!-- ══════════ DASHBOARD ══════════ -->
+    <div class="screen" id="dashboard">
+        <!-- Header with search -->
+        <div class="dash-header" style="position:relative;">
+            <div class="greeting" id="dash-greeting">👋 Welcome!</div>
+            <h2 id="dash-title">Your Career Matches</h2>
+            <span class="match-badge" id="dash-badge">✨ Based on your quiz results</span>
 
-  professional: {
-    label: "Working Professional",
-    greeting: "Good to have you here! 💼",
-    dashTitle: "Level Up Your Career",
-    badge: "✨ Tailored to your experience",
-    quizIntro: "Let's find the best next step for your career",
-    questions: [
-      { q: "How many years of work experience do you have?",
-        opts: ["Less than 2 years", "2–5 years", "5–10 years", "10+ years"] },
-      { q: "What's the biggest challenge in your current role?",
-        opts: ["I've hit a ceiling — no room to grow", "I want more creative or meaningful work", "I need better pay & recognition", "I want to move into leadership"] },
-      { q: "Which skills do you want to develop?",
-        opts: ["Technical skills (data, AI, coding)", "Leadership & management", "Business strategy & entrepreneurship", "Communication & personal branding"] },
-      { q: "What's your ideal career goal?",
-        opts: ["Get promoted to a senior/lead role", "Transition to a new industry", "Start my own business or consult", "Build expertise and become a specialist"] },
-      { q: "How much time can you invest in upskilling per week?",
-        opts: ["Less than 2 hours", "2–5 hours", "5–10 hours", "More than 10 hours"] },
-    ],
-    careers: [
-      { icon: "📈", bg: "#D1FAE5", title: "Senior Product Manager", sub: "Strategy · Leadership · Growth", match: 91, top: true },
-      { icon: "🤖", bg: "#EEF2FF", title: "AI / ML Specialist", sub: "Tech · Data · Future Skills", match: 84, top: false },
-      { icon: "🧑‍💼", bg: "#FEF3C7", title: "Business Consultant", sub: "Strategy · Client Work · Impact", match: 77, top: false },
-    ],
-    roadmapTitle: "Senior Product Manager",
-    roadmapSub: "Your roadmap to a leadership role",
-    roadmapSteps: [
-      { step: "Step 1 · Assess", title: "Audit Your Current Skills", desc: "List your top 10 skills, identify gaps for a PM role. Ask your manager for honest feedback on your strengths.", tags: ["Self-driven", "1 week"], done: true },
-      { step: "Step 2 · Learn", title: "Take a Product Management Course", desc: "Try PM School, Reforge, or the Google Project Management Certificate on Coursera. Focus on roadmapping & prioritisation.", tags: ["Paid", "1–2 months"] },
-      { step: "Step 3 · Network", title: "Build Your PM Network", desc: "Join PM communities on LinkedIn, attend local product meetups, connect with PMs at your company or target companies.", tags: ["Free", "Ongoing"] },
-      { step: "Step 4 · Prove It", title: "Lead a Cross-Functional Project", desc: "Volunteer to own a project at work that involves multiple teams. Document the outcome and add it to your resume.", tags: ["At work", "1–3 months"] },
-      { step: "Step 5 · Apply", title: "Update Resume & Start Applying", desc: "Rewrite your resume to highlight product thinking, metrics, and leadership. Apply to Senior PM roles at target companies.", tags: ["Active job search", "Ongoing"] },
-    ],
-  },
+            <!-- Search Bar -->
+            <div class="search-container">
+                <span class="search-icon-wrap">🔍</span>
+                <input type="text" id="skill-search-input" placeholder="Search a skill or career…" oninput="handleSearch(this.value)" onfocus="showSearchPanel()" autocomplete="off"/>
+                <button class="search-clear" id="search-clear-btn" onclick="clearSearch()">✕</button>
+            </div>
 
-  switcher: {
-    label: "Career Switcher",
-    greeting: "Ready for something new? 🔄",
-    dashTitle: "Your Fresh Career Options",
-    badge: "✨ Your experience is your advantage",
-    quizIntro: "Tell us where you are — we'll find where you're going",
-    questions: [
-      { q: "Why do you want to switch careers?",
-        opts: ["I'm burnt out in my current field", "I found a passion I want to pursue", "Better pay or growth opportunities", "My industry is declining or unstable"] },
-      { q: "What skills from your current job can you transfer?",
-        opts: ["Communication & people skills", "Analytical & problem-solving skills", "Technical or specialist knowledge", "Management & organisational skills"] },
-      { q: "How quickly do you need to make the switch?",
-        opts: ["Within 3 months", "6 months", "Within 1 year", "I'm exploring — no rush"] },
-      { q: "What kind of new work appeals to you most?",
-        opts: ["Tech & digital (future-proof)", "Creative & media (fulfilling)", "Healthcare & education (impactful)", "Business & finance (rewarding)"] },
-      { q: "How are you planning to upskill?",
-        opts: ["Online courses in my spare time", "Full-time bootcamp or program", "Self-taught through projects", "I need help figuring this out"] },
-    ],
-    careers: [
-      { icon: "💻", bg: "#EEF2FF", title: "Web Developer", sub: "Tech · High Demand · Remote Friendly", match: 89, top: true },
-      { icon: "📣", bg: "#FEF3C7", title: "Digital Marketer", sub: "Marketing · Creative · Analytics", match: 83, top: false },
-      { icon: "🎓", bg: "#F0FDF4", title: "Corporate Trainer", sub: "Teaching · People Skills · Impact", match: 75, top: false },
-    ],
-    roadmapTitle: "Web Developer",
-    roadmapSub: "Switch into tech — even without a degree",
-    roadmapSteps: [
-      { step: "Step 1 · Decide", title: "Commit to the Switch", desc: "Set a clear 6–12 month timeline. Tell someone you trust — accountability makes it real. Write down your 'why'.", tags: ["Mindset", "Day 1"], done: true },
-      { step: "Step 2 · Learn", title: "HTML, CSS & JavaScript Basics", desc: "Start with freeCodeCamp or The Odin Project — both are free and structured perfectly for beginners switching careers.", tags: ["Free", "2–3 months"] },
-      { step: "Step 3 · Build", title: "Build 3 Real Projects", desc: "Create a personal website, a small web app, and one project solving a real problem. Push them all to GitHub.", tags: ["Self-driven", "1–2 months"] },
-      { step: "Step 4 · Bootcamp", title: "Consider a Part-Time Bootcamp", desc: "If you need structure, join a part-time coding bootcamp. Many offer income share agreements — you pay after you get hired.", tags: ["Optional", "Paid", "3–6 months"] },
-      { step: "Step 5 · Apply", title: "Apply for Junior Dev Roles", desc: "Apply to 5 jobs per week. Highlight transferable skills in your cover letter. Your past experience is a unique advantage.", tags: ["Active search", "Month 6+"] },
-    ],
-  },
-};
+            <!-- Suggestion quick-chips -->
+            <div class="suggestions" id="search-suggestions">
+                <span class="sug-chip" onclick="doQuickSearch('Figma')">Figma</span>
+                <span class="sug-chip" onclick="doQuickSearch('Python')">Python</span>
+                <span class="sug-chip" onclick="doQuickSearch('Marketing')">Marketing</span>
+                <span class="sug-chip" onclick="doQuickSearch('Data')">Data</span>
+                <span class="sug-chip" onclick="doQuickSearch('Design')">Design</span>
+                <span class="sug-chip" onclick="doQuickSearch('React')">React</span>
+            </div>
 
-// ════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════
-let selectedType = null;   // 'school' | 'college' | 'professional' | 'switcher'
-let currentQ = 0;
-let chosen = null;
-const typeMap = [null, 'school', 'college', 'professional', 'switcher'];
+            <!-- Search results dropdown -->
+            <div class="search-results-panel" id="search-results-panel" style="top:100%;margin:8px 0 0;left:0;right:0;position:absolute;">
+                <div class="srp-header">
+                    <span class="srp-label" id="srp-label">Results</span>
+                </div>
+                <div id="srp-list"></div>
+            </div>
+        </div>
 
-// ════════════════════════════════════════════
-//  NAVIGATION
-// ════════════════════════════════════════════
-function go(screenId) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
-  if (screenId === 'quiz')      buildQuiz();
-  if (screenId === 'dashboard') buildDashboard();
-  if (screenId === 'roadmap')   buildRoadmap();
-}
+        <!-- Filter chips -->
+        <div class="filter-row" id="filter-row">
+            <button class="fchip active" onclick="filterByCategory(this,'all')">All</button>
+            <button class="fchip" onclick="filterByCategory(this,'tech')">💻 Tech</button>
+            <button class="fchip" onclick="filterByCategory(this,'design')">🎨 Design</button>
+            <button class="fchip" onclick="filterByCategory(this,'business')">📊 Business</button>
+            <button class="fchip" onclick="filterByCategory(this,'creative')">✨ Creative</button>
+            <button class="fchip" onclick="filterByCategory(this,'healthcare')">🏥 Healthcare</button>
+        </div>
 
-// ════════════════════════════════════════════
-//  ONBOARDING
-// ════════════════════════════════════════════
-function selectUser(el, type) {
-  document.querySelectorAll('.user-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedType = type;
-  document.getElementById('ob-next-btn').classList.add('ready');
-}
+        <div class="dash-body" id="dash-body-scroll">
 
-// ════════════════════════════════════════════
-//  QUIZ
-// ════════════════════════════════════════════
-function buildQuiz() {
-  currentQ = 0;
-  chosen = null;
-  const d = userData[selectedType];
-  document.getElementById('quiz-header-title').textContent = d.label + ' Quiz';
-  document.getElementById('quiz-header-sub').textContent = d.quizIntro;
-  renderQuestion();
-}
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-num" id="stat-matches">3</div>
+                    <div class="stat-label">Careers Matched</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-num">12</div>
+                    <div class="stat-label">Resources Ready</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🗺️</div>
+                    <div class="stat-num">5</div>
+                    <div class="stat-label">Roadmap Steps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-num">0%</div>
+                    <div class="stat-label">Journey Started</div>
+                </div>
+            </div>
 
-function renderQuestion() {
-  chosen = null;
-  const qs = userData[selectedType].questions;
-  const q = qs[currentQ];
-  const pct = ((currentQ + 1) / qs.length) * 100;
-  document.getElementById('quiz-progress').style.width = pct + '%';
-  document.getElementById('quiz-next-btn').classList.remove('ready');
-  document.getElementById('quiz-body').innerHTML = `
+            <div>
+                <div class="section-title" id="careers-section-title">Top Matches For You</div>
+                <div id="dash-career-cards"></div>
+            </div>
+
+            <button class="btn-roadmap" onclick="go('roadmap')">View My Roadmap →</button>
+        </div>
+
+        <div class="nav-bar">
+            <div class="nav-item active">
+                <span>🏠</span>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" onclick="go('roadmap')">
+                <span>🗺️</span>
+                <span>Roadmap</span>
+            </div>
+            <div class="nav-item">
+                <span>📚</span>
+                <span>Library</span>
+            </div>
+            <div class="nav-item">
+                <span>👤</span>
+                <span>Profile</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════ ROADMAP (quiz-based) ══════════ -->
+    <div class="screen" id="roadmap">
+        <div class="roadmap-header">
+            <div class="back-btn" onclick="go('dashboard')">← Back to Dashboard</div>
+            <h2 id="roadmap-title">UX Designer Roadmap</h2>
+            <p id="roadmap-sub">Your step-by-step path</p>
+        </div>
+        <div class="roadmap-body" style="padding-bottom:80px">
+            <div class="timeline" id="roadmap-timeline"></div>
+        </div>
+        <div class="nav-bar">
+            <div class="nav-item" onclick="go('dashboard')">
+                <span>🏠</span>
+                <span>Home</span>
+            </div>
+            <div class="nav-item active">
+                <span>🗺️</span>
+                <span>Roadmap</span>
+            </div>
+            <div class="nav-item">
+                <span>📚</span>
+                <span>Library</span>
+            </div>
+            <div class="nav-item">
+                <span>👤</span>
+                <span>Profile</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════ SEARCH ROADMAP ══════════ -->
+    <div class="screen" id="search-roadmap">
+        <div class="sr-header">
+            <div class="back-btn" onclick="go('dashboard')">← Back to Dashboard</div>
+            <h2 id="sr-roadmap-title">Roadmap</h2>
+            <p id="sr-roadmap-sub">Your step-by-step path</p>
+        </div>
+        <div class="roadmap-body" style="padding-bottom:80px">
+            <div class="timeline" id="sr-roadmap-timeline"></div>
+        </div>
+        <div class="nav-bar">
+            <div class="nav-item" onclick="go('dashboard')">
+                <span>🏠</span>
+                <span>Home</span>
+            </div>
+            <div class="nav-item active">
+                <span>🗺️</span>
+                <span>Roadmap</span>
+            </div>
+            <div class="nav-item">
+                <span>📚</span>
+                <span>Library</span>
+            </div>
+            <div class="nav-item">
+                <span>👤</span>
+                <span>Profile</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ════════════════════════════════════════════
+    //  ALL CAREERS DATABASE (for search)
+    // ════════════════════════════════════════════
+    const allCareers = [
+    {
+        id: 'ux',
+        icon: '💡',
+        bg: '#EEF2FF',
+        title: 'UX Designer',
+        sub: 'Design · Tech · Creativity',
+        match: 94,
+        tags: ['design', 'tech'],
+        keywords: ['figma', 'user research', 'wireframe', 'prototype', 'ui', 'ux', 'design thinking', 'usability', 'sketch', 'adobe xd'],
+        steps: [
+        {
+            step: 'Step 1 · Foundation',
+            title: 'Learn design thinking basics',
+            desc: 'Study the 5 stages of design thinking: empathise, define, ideate, prototype, test. Free resources on IDEO and Coursera.',
+            tags: ['Free', '1 week'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Tools',
+            title: 'Master Figma',
+            desc: 'Learn frames, auto-layout, components, and interactive prototyping. Start on figma.com/resources. Completely free to begin.',
+            tags: ['Free', '2–3 weeks']
+        },
+        {
+            step: 'Step 3 · Skills',
+            title: 'Study user research methods',
+            desc: 'Learn user interviews, usability testing, surveys, and how to write a clear research report. Practice on classmates or friends.',
+            tags: ['Free', '2 weeks']
+        },
+        {
+            step: 'Step 4 · Portfolio',
+            title: 'Build 3 case study projects',
+            desc: 'Full project flow: research → wireframes → prototype → test. Document every decision. Upload to Behance or a personal site.',
+            tags: ['1–2 months', 'Self-driven']
+        },
+        {
+            step: 'Step 5 · Certify',
+            title: 'Google UX Design Certificate',
+            desc: 'A globally recognised 6-month program on Coursera. Highly valued by employers. Apply for jobs right after completion.',
+            tags: ['Paid', '6 months', 'Coursera']
+        },
+        ]
+    },
+    {
+        id: 'dev',
+        icon: '💻',
+        bg: '#F0FDF4',
+        title: 'Web Developer',
+        sub: 'Tech · High demand · Remote',
+        match: 91,
+        tags: ['tech'],
+        keywords: ['html', 'css', 'javascript', 'react', 'node', 'python', 'coding', 'programming', 'frontend', 'backend', 'fullstack', 'web', 'github'],
+        steps: [
+        {
+            step: 'Step 1 · Basics',
+            title: 'HTML & CSS fundamentals',
+            desc: 'Build static pages. Use freeCodeCamp or The Odin Project — both free and perfectly structured for beginners.',
+            tags: ['Free', '3–4 weeks'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Core Language',
+            title: 'JavaScript essentials',
+            desc: 'Variables, functions, DOM manipulation, fetch API. Practice daily on JS30 or Exercism. Build small interactive projects.',
+            tags: ['Free', '4–6 weeks']
+        },
+        {
+            step: 'Step 3 · Framework',
+            title: 'Learn React',
+            desc: 'Component model, hooks, state management. Build a to-do app first, then a small portfolio project to cement the concepts.',
+            tags: ['Free', '1 month']
+        },
+        {
+            step: 'Step 4 · Backend',
+            title: 'Node.js + Express basics',
+            desc: 'REST APIs, databases (PostgreSQL or MongoDB), basic authentication. Connect your frontend to a real backend.',
+            tags: ['Free–Paid', '6 weeks']
+        },
+        {
+            step: 'Step 5 · Jobs',
+            title: 'Apply for junior dev roles',
+            desc: 'Post 3+ projects on GitHub. Apply to 5 jobs per week. Your portfolio matters far more than your degree for entry-level roles.',
+            tags: ['Active search', 'Month 4+']
+        },
+        ]
+    },
+    {
+        id: 'data',
+        icon: '📊',
+        bg: '#FFFBEB',
+        title: 'Data Analyst',
+        sub: 'Analytics · Problem solving · Tech',
+        match: 87,
+        tags: ['tech', 'business'],
+        keywords: ['excel', 'sql', 'python', 'pandas', 'tableau', 'power bi', 'data', 'analytics', 'statistics', 'machine learning', 'numpy', 'data science'],
+        steps: [
+        {
+            step: 'Step 1 · Foundation',
+            title: 'Excel & Google Sheets mastery',
+            desc: 'Pivot tables, VLOOKUP, XLOOKUP, basic stats. These are still used daily at most companies worldwide.',
+            tags: ['Free', '1 week'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Programming',
+            title: 'Learn Python for data',
+            desc: 'pandas, numpy, matplotlib, seaborn. Use Kaggle Learn — it is free, structured, and specifically for data work.',
+            tags: ['Free', '4–6 weeks']
+        },
+        {
+            step: 'Step 3 · Databases',
+            title: 'SQL fundamentals',
+            desc: 'SELECT, JOIN, GROUP BY, window functions. Practice on Mode Analytics, SQLZoo, or HackerRank SQL challenges.',
+            tags: ['Free', '2–3 weeks']
+        },
+        {
+            step: 'Step 4 · Visualisation',
+            title: 'Tableau or Power BI',
+            desc: 'Build your first interactive dashboard using public datasets from Kaggle, government portals, or Makeover Monday.',
+            tags: ['Free trial', '2 weeks']
+        },
+        {
+            step: 'Step 5 · Portfolio',
+            title: 'Complete a capstone project',
+            desc: 'Pick a real dataset, ask a business question, analyse it fully end-to-end, then present your findings clearly. Add to portfolio.',
+            tags: ['Self-driven', '1 month']
+        },
+        ]
+    },
+    {
+        id: 'mkt',
+        icon: '📣',
+        bg: '#FEF3C7',
+        title: 'Digital Marketer',
+        sub: 'Marketing · Creative · Analytics',
+        match: 83,
+        tags: ['business', 'creative'],
+        keywords: ['seo', 'sem', 'google ads', 'meta ads', 'social media', 'email marketing', 'content', 'copywriting', 'branding', 'marketing', 'analytics'],
+        steps: [
+        {
+            step: 'Step 1 · Overview',
+            title: 'Understand digital channels',
+            desc: 'SEO, SEM, social media, email, content marketing — learn what each channel does and when each works best.',
+            tags: ['Free', '3 days'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Certificate',
+            title: 'Google Digital Marketing certificate',
+            desc: 'Free course from Google Garage. Covers search ads, analytics, social media, and email marketing basics. Well recognised.',
+            tags: ['Free', '40 hrs']
+        },
+        {
+            step: 'Step 3 · Practice',
+            title: 'Run a real ad campaign',
+            desc: 'Run a small Google Ads or Meta Ads campaign with even ₹500–₹1000 budget. Real spend teaches faster than any course.',
+            tags: ['Low cost', '1 week']
+        },
+        {
+            step: 'Step 4 · Analytics',
+            title: 'Master Google Analytics 4',
+            desc: 'Understand traffic sources, conversion goals, event tracking, and funnel reports. Add GA4 to any project you manage.',
+            tags: ['Free', '1 week']
+        },
+        {
+            step: 'Step 5 · Portfolio',
+            title: 'Build a results portfolio',
+            desc: 'Document 3 campaigns with actual metrics — spend, CTR, conversions, improvements. Numbers are what employers want.',
+            tags: ['Ongoing']
+        },
+        ]
+    },
+    {
+        id: 'gdesign',
+        icon: '🎨',
+        bg: '#FDF4FF',
+        title: 'Graphic Designer',
+        sub: 'Art · Creativity · Visual communication',
+        match: 88,
+        tags: ['design', 'creative'],
+        keywords: ['illustrator', 'photoshop', 'adobe', 'canva', 'logo', 'branding', 'typography', 'poster', 'graphic', 'visual design', 'colour theory'],
+        steps: [
+        {
+            step: 'Step 1 · Theory',
+            title: 'Learn core design principles',
+            desc: 'Colour theory, typography, visual hierarchy, white space, contrast. Study Canva Design School — free and very well made.',
+            tags: ['Free', '1 week'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Tools',
+            title: 'Start with Canva, then Illustrator',
+            desc: 'Create real designs in Canva immediately. Transition to Adobe Illustrator for professional vector work within a few weeks.',
+            tags: ['Free–Paid', '3 weeks']
+        },
+        {
+            step: 'Step 3 · Technique',
+            title: 'Recreate great designs',
+            desc: 'Copy existing excellent designs to deeply understand how they work. This is how professionals actually develop their eye.',
+            tags: ['Self-driven', 'Ongoing']
+        },
+        {
+            step: 'Step 4 · Portfolio',
+            title: 'Design 10 real pieces',
+            desc: 'Logo, poster, social media pack, brochure, packaging, UI screen. Quality matters most — but 10 pieces shows range.',
+            tags: ['1–2 months']
+        },
+        {
+            step: 'Step 5 · Publish',
+            title: 'Launch on Behance & Dribbble',
+            desc: 'Portfolio visibility where clients and recruiters actively search. Connect with other designers and get community feedback.',
+            tags: ['Free', 'Ongoing']
+        },
+        ]
+    },
+    {
+        id: 'pm',
+        icon: '🚀',
+        bg: '#F0FDF4',
+        title: 'Product Manager',
+        sub: 'Strategy · Leadership · Tech',
+        match: 81,
+        tags: ['business', 'tech'],
+        keywords: ['product', 'roadmap', 'agile', 'scrum', 'jira', 'strategy', 'user stories', 'stakeholders', 'prioritisation', 'okr', 'kpi', 'leadership'],
+        steps: [
+        {
+            step: 'Step 1 · Understand',
+            title: 'Learn what a PM does',
+            desc: 'Read "Inspired" by Marty Cagan. Watch Lenny Rachitsky\'s YouTube series. Write a 1-page summary of what you learn.',
+            tags: ['Free', '3 days'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Frameworks',
+            title: 'Study PM frameworks',
+            desc: 'Jobs-to-be-done, North Star metric, PRDs, roadmapping, prioritisation frameworks (RICE, MoSCoW). Apply each to a real product.',
+            tags: ['Free', '2 weeks']
+        },
+        {
+            step: 'Step 3 · Upskill',
+            title: 'Take a PM course',
+            desc: 'PM School (great for India), Reforge (advanced), or the Google PM Certificate. Focus on metrics, prioritisation, and communication.',
+            tags: ['Paid', '1–2 months']
+        },
+        {
+            step: 'Step 4 · Experience',
+            title: 'Lead a cross-functional project',
+            desc: 'Volunteer to own a project at work or in a college club involving multiple people. Document your decisions and outcomes carefully.',
+            tags: ['At work/study']
+        },
+        {
+            step: 'Step 5 · Apply',
+            title: 'Network and apply',
+            desc: 'Connect with PMs on LinkedIn. Reach out for 15-min coffee chats. Apply to APM programs if early career. PM roles go fast.',
+            tags: ['Active search']
+        },
+        ]
+    },
+    {
+        id: 'ml',
+        icon: '🤖',
+        bg: '#EFF6FF',
+        title: 'AI / ML Engineer',
+        sub: 'AI · Data science · Future tech',
+        match: 85,
+        tags: ['tech'],
+        keywords: ['machine learning', 'ai', 'deep learning', 'tensorflow', 'pytorch', 'python', 'neural network', 'nlp', 'computer vision', 'data science', 'scikit'],
+        steps: [
+        {
+            step: 'Step 1 · Maths',
+            title: 'Linear algebra & statistics',
+            desc: 'Vectors, matrices, probability, and basic calculus. Use 3Blue1Brown on YouTube — the best visual explanation available.',
+            tags: ['Free', '3–4 weeks'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Python',
+            title: 'Python for ML',
+            desc: 'numpy, pandas, matplotlib, scikit-learn. Complete Andrew Ng\'s Machine Learning Specialisation on Coursera — industry standard.',
+            tags: ['Free–Paid', '2 months']
+        },
+        {
+            step: 'Step 3 · Deep Learning',
+            title: 'Neural networks & deep learning',
+            desc: 'Convolutional networks, RNNs, transformers. Use fast.ai for a top-down practical approach, or deeplearning.ai for theory-first.',
+            tags: ['Free–Paid', '2–3 months']
+        },
+        {
+            step: 'Step 4 · Projects',
+            title: 'Build real ML projects',
+            desc: 'Image classifier, recommendation system, NLP model on real data. Push everything to GitHub. Kaggle competitions build credibility.',
+            tags: ['Self-driven', 'Ongoing']
+        },
+        {
+            step: 'Step 5 · Specialise',
+            title: 'Pick a specialisation',
+            desc: 'NLP (text), Computer Vision (images), Reinforcement Learning (agents), or MLOps (deploying models). Go deep in one area.',
+            tags: ['6+ months']
+        },
+        ]
+    },
+    {
+        id: 'finance',
+        icon: '💰',
+        bg: '#F0FDF4',
+        title: 'Financial Analyst',
+        sub: 'Finance · Business · Analytics',
+        match: 80,
+        tags: ['business'],
+        keywords: ['excel', 'finance', 'accounting', 'investment', 'cfa', 'valuation', 'dcf', 'financial modelling', 'stock', 'portfolio', 'bloomberg'],
+        steps: [
+        {
+            step: 'Step 1 · Basics',
+            title: 'Accounting & financial statements',
+            desc: 'Learn to read P&L, balance sheet, and cash flow statements. Use Khan Academy Finance — free and excellent for beginners.',
+            tags: ['Free', '2 weeks'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Excel',
+            title: 'Advanced Excel for finance',
+            desc: 'Financial modelling, DCF, sensitivity analysis. Chandoo.org and CFI both offer excellent free Excel for finance training.',
+            tags: ['Free', '3 weeks']
+        },
+        {
+            step: 'Step 3 · Certification',
+            title: 'CFA Level 1 preparation',
+            desc: 'The gold standard finance certification. Requires 300+ hours of study. Start with CFA Institute\'s free study materials.',
+            tags: ['Paid exam', '6–12 months']
+        },
+        {
+            step: 'Step 4 · Internship',
+            title: 'Get a finance internship',
+            desc: 'Target banks, AMCs, NBFCs, or corporate finance teams. Even a 2-month internship dramatically improves your hiring odds.',
+            tags: ['Active search']
+        },
+        {
+            step: 'Step 5 · Specialise',
+            title: 'Choose your finance track',
+            desc: 'Investment banking, equity research, corporate finance, asset management, or FinTech. Each has a distinct career path ahead.',
+            tags: ['Ongoing']
+        },
+        ]
+    },
+    {
+        id: 'content',
+        icon: '✍️',
+        bg: '#FFF1F2',
+        title: 'Content Creator / Writer',
+        sub: 'Writing · Media · Communication',
+        match: 78,
+        tags: ['creative'],
+        keywords: ['writing', 'content', 'blogging', 'copywriting', 'seo writing', 'social media', 'video', 'youtube', 'instagram', 'storytelling', 'journalism'],
+        steps: [
+        {
+            step: 'Step 1 · Skill',
+            title: 'Develop your writing voice',
+            desc: 'Write 500 words every single day for 30 days. No editing while writing. Read "On Writing" by Stephen King for craft fundamentals.',
+            tags: ['Free', '30 days'],
+            done: true
+        },
+        {
+            step: 'Step 2 · SEO',
+            title: 'Learn SEO content writing',
+            desc: 'Understand keyword research, search intent, and on-page SEO. Use Ahrefs Blog and Backlinko — both excellent free resources.',
+            tags: ['Free', '2 weeks']
+        },
+        {
+            step: 'Step 3 · Platform',
+            title: 'Start a blog or newsletter',
+            desc: 'Publish consistently on Medium, Substack, or your own site. Consistency over perfection. Your first 50 posts will be rough.',
+            tags: ['Free', 'Ongoing']
+        },
+        {
+            step: 'Step 4 · Portfolio',
+            title: 'Build a content portfolio',
+            desc: '10 published pieces covering different formats — how-to, opinion, interview, list, story. Quality and range matter to clients.',
+            tags: ['2–3 months']
+        },
+        {
+            step: 'Step 5 · Monetise',
+            title: 'Freelance or join a team',
+            desc: 'Apply to content agencies, in-house content teams, or get freelance clients via LinkedIn and Contra. Rates grow with your portfolio.',
+            tags: ['Active search']
+        },
+        ]
+    },
+    {
+        id: 'teacher',
+        icon: '🎓',
+        bg: '#ECFDF5',
+        title: 'Teacher / Educator',
+        sub: 'Education · Impact · Communication',
+        match: 82,
+        tags: ['healthcare'],
+        keywords: ['teaching', 'education', 'curriculum', 'lesson plan', 'edtech', 'tutoring', 'training', 'coaching', 'pedagogy', 'learning'],
+        steps: [
+        {
+            step: 'Step 1 · Foundation',
+            title: 'Study educational psychology basics',
+            desc: 'Learn how people learn — Bloom\'s taxonomy, learning styles, and cognitive load theory. Free resources on MIT OpenCourseWare.',
+            tags: ['Free', '1 week'],
+            done: true
+        },
+        {
+            step: 'Step 2 · Practice',
+            title: 'Start tutoring or volunteering',
+            desc: 'Teach a subject you know to friends, family, or through local NGOs. Real teaching experience matters far more than theory alone.',
+            tags: ['Free', 'Ongoing']
+        },
+        {
+            step: 'Step 3 · Tools',
+            title: 'Learn digital teaching tools',
+            desc: 'Google Classroom, Canva for Education, Nearpod, Kahoot. These are now standard in modern classrooms and online education.',
+            tags: ['Free', '2 weeks']
+        },
+        {
+            step: 'Step 4 · Certify',
+            title: 'Get a B.Ed or teaching certificate',
+            desc: 'B.Ed is required for school teaching in India. For online teaching or corporate training, a CELTA or TEFL certificate works.',
+            tags: ['Paid', '1–2 years']
+        },
+        {
+            step: 'Step 5 · Specialise',
+            title: 'Choose your education path',
+            desc: 'School teacher, online tutor, EdTech content creator, corporate trainer, or curriculum designer. Each has a clear entry point.',
+            tags: ['Ongoing']
+        },
+        ]
+    },
+    ];
+
+    // ════════════════════════════════════════════
+    //  PER-USER-TYPE DATA (original quiz data)
+    // ════════════════════════════════════════════
+    const userData = {
+        school: {
+            label: "School Student",
+            greeting: "Hey there, future achiever! 👋",
+            dashTitle: "Careers You Could Love",
+            badge: "✨ Based on your interests & strengths",
+            quizIntro: "Let's find out what excites your curious mind",
+            questions: [
+            {
+                q: "Which subject do you enjoy most in school?",
+                opts: ["🎨 Art & Creative subjects", "🔢 Maths & Science", "📖 Languages & Literature", "⚽ Sports & Physical Education"]
+            },
+            {
+                q: "What do you love doing after school?",
+                opts: ["Drawing, building or making things", "Reading, writing or researching", "Playing games or solving puzzles", "Helping friends or volunteering"]
+            },
+            {
+                q: "How do your teachers describe you?",
+                opts: ["Creative and imaginative", "Logical and sharp", "Caring and empathetic", "Energetic and a natural leader"]
+            },
+            {
+                q: "Which school project would you enjoy most?",
+                opts: ["Designing a poster or video", "Building a science experiment", "Writing a story or poem", "Organising a school event"]
+            },
+            {
+                q: "What do you dream of doing one day?",
+                opts: ["Create something people love", "Discover or invent something new", "Help people or change the world", "Lead a team or run something big"]
+            },
+            ],
+            careers: [
+            {
+                icon: "🎨",
+                bg: "#FEF3C7",
+                title: "Graphic Designer",
+                sub: "Art · Creativity · Technology",
+                match: 92,
+                top: true,
+                id: 'gdesign'
+            },
+            {
+                icon: "🔬",
+                bg: "#D1FAE5",
+                title: "Scientist / Researcher",
+                sub: "Science · Discovery · Innovation",
+                match: 85,
+                top: false,
+                id: 'ml'
+            },
+            {
+                icon: "✍️",
+                bg: "#EEF2FF",
+                title: "Content Creator",
+                sub: "Writing · Media · Communication",
+                match: 78,
+                top: false,
+                id: 'content'
+            },
+            ],
+            roadmapTitle: "Graphic Designer",
+            roadmapSub: "Your path from school to a creative career",
+            roadmapSteps: [
+            {
+                step: "Step 1 · Explore",
+                title: "Learn What Graphic Design Is",
+                desc: "Watch YouTube videos and look at design portfolios on Behance or Dribbble. Understand what designers actually do every day.",
+                tags: ["Free", "1 week"],
+                done: true
+            },
+            {
+                step: "Step 2 · Tools",
+                title: "Start with Canva (Free & Easy)",
+                desc: "Canva is perfect for beginners. Create posters, social media graphics, and presentations. No experience needed.",
+                tags: ["Free", "2 weeks"]
+            },
+            {
+                step: "Step 3 · Learn",
+                title: "Take a Free Design Course",
+                desc: "Try Google's free 'Fundamentals of Digital Marketing' or a basic design course on Coursera or YouTube.",
+                tags: ["Free", "1 month"]
+            },
+            {
+                step: "Step 4 · Practice",
+                title: "Design 5 Personal Projects",
+                desc: "Redesign a school notice, make a poster for a cause you care about, create a logo for a fictional brand.",
+                tags: ["Self-driven", "Ongoing"]
+            },
+            {
+                step: "Step 5 · Plan",
+                title: "Choose the Right College Course",
+                desc: "Look for B.Des (Bachelor of Design), Fine Arts, or Mass Communication courses in your country after 12th grade.",
+                tags: ["Research needed", "Before Class 12"]
+            },
+            ],
+        },
+        college: {
+            label: "College Student",
+            greeting: "Welcome, future professional! 🎓",
+            dashTitle: "Your Best Career Matches",
+            badge: "✨ Matched to your skills & interests",
+            quizIntro: "Tell us about yourself — we'll find your perfect fit",
+            questions: [
+            {
+                q: "What's your current field of study?",
+                opts: ["💻 Engineering / Technology", "🎨 Design / Arts / Media", "📊 Business / Commerce / Finance", "🔬 Science / Healthcare / Research"]
+            },
+            {
+                q: "What kind of internship would excite you?",
+                opts: ["Building apps or tech products", "Designing or creating content", "Analysing data or managing projects", "Working with clients or in healthcare"]
+            },
+            {
+                q: "How do you prefer to work?",
+                opts: ["Independently, deep in code or design", "Collaborating in a creative team", "Leading projects and coordinating people", "Researching and solving complex problems"]
+            },
+            {
+                q: "What matters most to you in a career?",
+                opts: ["High salary & fast growth", "Creative freedom & expression", "Making a positive impact", "Stability & work-life balance"]
+            },
+            {
+                q: "Where do you want to be in 3 years?",
+                opts: ["At a top tech or design company", "Running my own startup or freelancing", "In a management or leadership role", "Pursuing further studies or research"]
+            },
+            ],
+            careers: [
+            {
+                icon: "💻",
+                bg: "#EEF2FF",
+                title: "UX Designer",
+                sub: "Design · Technology · Creativity",
+                match: 94,
+                top: true,
+                id: 'ux'
+            },
+            {
+                icon: "📊",
+                bg: "#FEF3C7",
+                title: "Data Analyst",
+                sub: "Analytics · Problem Solving · Tech",
+                match: 87,
+                top: false,
+                id: 'data'
+            },
+            {
+                icon: "🚀",
+                bg: "#F0FDF4",
+                title: "Product Manager",
+                sub: "Strategy · Leadership · Tech",
+                match: 81,
+                top: false,
+                id: 'pm'
+            },
+            ],
+            roadmapTitle: "UX Designer",
+            roadmapSub: "From college to your first design job",
+            roadmapSteps: [
+            {
+                step: "Step 1 · Foundation",
+                title: "Understand UX Design Principles",
+                desc: "Read 'Don't Make Me Think' by Steve Krug. Watch UX crash courses on YouTube. Learn the design thinking process.",
+                tags: ["Free", "1 week"],
+                done: true
+            },
+            {
+                step: "Step 2 · Tools",
+                title: "Master Figma",
+                desc: "Figma is the industry standard. Learn frames, auto-layout, components, and interactive prototyping.",
+                tags: ["Free", "2–3 weeks"]
+            },
+            {
+                step: "Step 3 · Skills",
+                title: "Learn User Research Methods",
+                desc: "Study how to run user interviews, usability tests, and create user personas. Practice on classmates.",
+                tags: ["Free", "2 weeks"]
+            },
+            {
+                step: "Step 4 · Portfolio",
+                title: "Build 3 Case Study Projects",
+                desc: "Do a full UX project: research → wireframes → prototype → test. Document everything. Upload to a portfolio site.",
+                tags: ["1–2 months", "Self-driven"]
+            },
+            {
+                step: "Step 5 · Certify",
+                title: "Google UX Design Certificate",
+                desc: "A globally recognised 6-month program on Coursera. Highly valued by employers. Apply for jobs right after.",
+                tags: ["Paid", "6 months", "Coursera"]
+            },
+            ],
+        },
+        professional: {
+            label: "Working Professional",
+            greeting: "Good to have you here! 💼",
+            dashTitle: "Level Up Your Career",
+            badge: "✨ Tailored to your experience",
+            quizIntro: "Let's find the best next step for your career",
+            questions: [
+            {
+                q: "How many years of work experience do you have?",
+                opts: ["Less than 2 years", "2–5 years", "5–10 years", "10+ years"]
+            },
+            {
+                q: "What's the biggest challenge in your current role?",
+                opts: ["I've hit a ceiling — no room to grow", "I want more creative or meaningful work", "I need better pay & recognition", "I want to move into leadership"]
+            },
+            {
+                q: "Which skills do you want to develop?",
+                opts: ["Technical skills (data, AI, coding)", "Leadership & management", "Business strategy & entrepreneurship", "Communication & personal branding"]
+            },
+            {
+                q: "What's your ideal career goal?",
+                opts: ["Get promoted to a senior/lead role", "Transition to a new industry", "Start my own business or consult", "Build expertise and become a specialist"]
+            },
+            {
+                q: "How much time can you invest in upskilling per week?",
+                opts: ["Less than 2 hours", "2–5 hours", "5–10 hours", "More than 10 hours"]
+            },
+            ],
+            careers: [
+            {
+                icon: "📈",
+                bg: "#D1FAE5",
+                title: "Senior Product Manager",
+                sub: "Strategy · Leadership · Growth",
+                match: 91,
+                top: true,
+                id: 'pm'
+            },
+            {
+                icon: "🤖",
+                bg: "#EEF2FF",
+                title: "AI / ML Specialist",
+                sub: "Tech · Data · Future Skills",
+                match: 84,
+                top: false,
+                id: 'ml'
+            },
+            {
+                icon: "🧑‍💼",
+                bg: "#FEF3C7",
+                title: "Business Consultant",
+                sub: "Strategy · Client Work · Impact",
+                match: 77,
+                top: false,
+                id: 'finance'
+            },
+            ],
+            roadmapTitle: "Senior Product Manager",
+            roadmapSub: "Your roadmap to a leadership role",
+            roadmapSteps: [
+            {
+                step: "Step 1 · Assess",
+                title: "Audit Your Current Skills",
+                desc: "List your top 10 skills, identify gaps for a PM role. Ask your manager for honest feedback on your strengths.",
+                tags: ["Self-driven", "1 week"],
+                done: true
+            },
+            {
+                step: "Step 2 · Learn",
+                title: "Take a Product Management Course",
+                desc: "Try PM School, Reforge, or the Google Project Management Certificate on Coursera. Focus on roadmapping & prioritisation.",
+                tags: ["Paid", "1–2 months"]
+            },
+            {
+                step: "Step 3 · Network",
+                title: "Build Your PM Network",
+                desc: "Join PM communities on LinkedIn, attend local product meetups, connect with PMs at your company or target companies.",
+                tags: ["Free", "Ongoing"]
+            },
+            {
+                step: "Step 4 · Prove It",
+                title: "Lead a Cross-Functional Project",
+                desc: "Volunteer to own a project at work that involves multiple teams. Document the outcome and add it to your resume.",
+                tags: ["At work", "1–3 months"]
+            },
+            {
+                step: "Step 5 · Apply",
+                title: "Update Resume & Start Applying",
+                desc: "Rewrite your resume to highlight product thinking, metrics, and leadership. Apply to Senior PM roles at target companies.",
+                tags: ["Active job search", "Ongoing"]
+            },
+            ],
+        },
+        switcher: {
+            label: "Career Switcher",
+            greeting: "Ready for something new? 🔄",
+            dashTitle: "Your Fresh Career Options",
+            badge: "✨ Your experience is your advantage",
+            quizIntro: "Tell us where you are — we'll find where you're going",
+            questions: [
+            {
+                q: "Why do you want to switch careers?",
+                opts: ["I'm burnt out in my current field", "I found a passion I want to pursue", "Better pay or growth opportunities", "My industry is declining or unstable"]
+            },
+            {
+                q: "What skills from your current job can you transfer?",
+                opts: ["Communication & people skills", "Analytical & problem-solving skills", "Technical or specialist knowledge", "Management & organisational skills"]
+            },
+            {
+                q: "How quickly do you need to make the switch?",
+                opts: ["Within 3 months", "6 months", "Within 1 year", "I'm exploring — no rush"]
+            },
+            {
+                q: "What kind of new work appeals to you most?",
+                opts: ["Tech & digital (future-proof)", "Creative & media (fulfilling)", "Healthcare & education (impactful)", "Business & finance (rewarding)"]
+            },
+            {
+                q: "How are you planning to upskill?",
+                opts: ["Online courses in my spare time", "Full-time bootcamp or program", "Self-taught through projects", "I need help figuring this out"]
+            },
+            ],
+            careers: [
+            {
+                icon: "💻",
+                bg: "#EEF2FF",
+                title: "Web Developer",
+                sub: "Tech · High Demand · Remote Friendly",
+                match: 89,
+                top: true,
+                id: 'dev'
+            },
+            {
+                icon: "📣",
+                bg: "#FEF3C7",
+                title: "Digital Marketer",
+                sub: "Marketing · Creative · Analytics",
+                match: 83,
+                top: false,
+                id: 'mkt'
+            },
+            {
+                icon: "🎓",
+                bg: "#F0FDF4",
+                title: "Corporate Trainer",
+                sub: "Teaching · People Skills · Impact",
+                match: 75,
+                top: false,
+                id: 'teacher'
+            },
+            ],
+            roadmapTitle: "Web Developer",
+            roadmapSub: "Switch into tech — even without a degree",
+            roadmapSteps: [
+            {
+                step: "Step 1 · Decide",
+                title: "Commit to the Switch",
+                desc: "Set a clear 6–12 month timeline. Tell someone you trust — accountability makes it real. Write down your 'why'.",
+                tags: ["Mindset", "Day 1"],
+                done: true
+            },
+            {
+                step: "Step 2 · Learn",
+                title: "HTML, CSS & JavaScript Basics",
+                desc: "Start with freeCodeCamp or The Odin Project — both are free and structured perfectly for beginners switching careers.",
+                tags: ["Free", "2–3 months"]
+            },
+            {
+                step: "Step 3 · Build",
+                title: "Build 3 Real Projects",
+                desc: "Create a personal website, a small web app, and one project solving a real problem. Push them all to GitHub.",
+                tags: ["Self-driven", "1–2 months"]
+            },
+            {
+                step: "Step 4 · Bootcamp",
+                title: "Consider a Part-Time Bootcamp",
+                desc: "If you need structure, join a part-time coding bootcamp. Many offer income share agreements — you pay after you get hired.",
+                tags: ["Optional", "Paid", "3–6 months"]
+            },
+            {
+                step: "Step 5 · Apply",
+                title: "Apply for Junior Dev Roles",
+                desc: "Apply to 5 jobs per week. Highlight transferable skills in your cover letter. Your past experience is a unique advantage.",
+                tags: ["Active search", "Month 6+"]
+            },
+            ],
+        },
+    };
+
+    // ════════════════════════════════════════════
+    //  STATE
+    // ════════════════════════════════════════════
+    let selectedType = null;
+    let currentQ = 0;
+    let chosen = null;
+    let activeFilter = 'all';
+    let searchOpen = false;
+
+    // ════════════════════════════════════════════
+    //  NAVIGATION
+    // ════════════════════════════════════════════
+    function go(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        if (screenId === 'quiz')
+            buildQuiz();
+        if (screenId === 'dashboard')
+            buildDashboard();
+        if (screenId === 'roadmap')
+            buildRoadmap();
+        if (screenId === 'dashboard')
+            closeSearch();
+    }
+
+    // ════════════════════════════════════════════
+    //  ONBOARDING
+    // ════════════════════════════════════════════
+    function selectUser(el, type) {
+        document.querySelectorAll('.user-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedType = type;
+        document.getElementById('ob-next-btn').classList.add('ready');
+    }
+
+    // ════════════════════════════════════════════
+    //  QUIZ
+    // ════════════════════════════════════════════
+    function buildQuiz() {
+        currentQ = 0;
+        chosen = null;
+        const d = userData[selectedType];
+        document.getElementById('quiz-header-title').textContent = d.label + ' Quiz';
+        document.getElementById('quiz-header-sub').textContent = d.quizIntro;
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        chosen = null;
+        const qs = userData[selectedType].questions;
+        const q = qs[currentQ];
+        const pct = ((currentQ + 1) / qs.length) * 100;
+        document.getElementById('quiz-progress').style.width = pct + '%';
+        document.getElementById('quiz-next-btn').classList.remove('ready');
+        document.getElementById('quiz-body').innerHTML = `
     <div class="q-num">Question ${currentQ + 1} of ${qs.length}</div>
     <div class="q-text">${q.q}</div>
     <div class="options-list">
-      ${q.opts.map((o, i) => `<button class="option" onclick="pickOption(this,${i})">${o}</button>`).join('')}
-    </div>`;
-}
+      ${
+        q.opts.map((o, i) => `<button class="option" onclick="pickOption(this,${i})">${o}</button>`).join('')}
+    </div>`
+        ;
+    }
 
-function pickOption(el, i) {
-  document.querySelectorAll('.option').forEach(o => o.classList.remove('chosen'));
-  el.classList.add('chosen');
-  chosen = i;
-  document.getElementById('quiz-next-btn').classList.add('ready');
-}
+    function pickOption(el, i) {
+        document.querySelectorAll('.option').forEach(o => o.classList.remove('chosen'));
+        el.classList.add('chosen');
+        chosen = i;
+        document.getElementById('quiz-next-btn').classList.add('ready');
+    }
 
-function nextQuestion() {
-  if (chosen === null) return;
-  const qs = userData[selectedType].questions;
-  if (currentQ < qs.length - 1) {
-    currentQ++;
-    renderQuestion();
-  } else {
-    go('dashboard');
-  }
-}
+    function nextQuestion() {
+        if (chosen === null)
+            return;
+        const qs = userData[selectedType].questions;
+        if (currentQ < qs.length - 1) {
+            currentQ++;
+            renderQuestion();
+        }
+        else
+            go('dashboard');
+    }
 
-// ════════════════════════════════════════════
-//  DASHBOARD
-// ════════════════════════════════════════════
-function buildDashboard() {
-  const d = userData[selectedType];
-  document.getElementById('dash-greeting').textContent = d.greeting;
-  document.getElementById('dash-title').textContent = d.dashTitle;
-  document.getElementById('dash-badge').textContent = d.badge;
+    // ════════════════════════════════════════════
+    //  DASHBOARD
+    // ════════════════════════════════════════════
+    function buildDashboard() {
+        const d = userData[selectedType];
+        document.getElementById('dash-greeting').textContent = d.greeting;
+        document.getElementById('dash-title').textContent = d.dashTitle;
+        document.getElementById('dash-badge').textContent = d.badge;
+        document.getElementById('stat-matches').textContent = d.careers.length;
+        renderCareerCards(d.careers, false);
+    }
 
-  const careerHTML = d.careers.map(c => `
-    <div class="career-card ${c.top ? 'top' : ''}" onclick="go('roadmap')" style="background:#fff;border-radius:18px;padding:20px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 12px rgba(79,70,229,.08);cursor:pointer;margin-bottom:12px;border:2px solid ${c.top ? '#4F46E5' : 'transparent'}">
-      <div class="cc-icon" style="background:${c.bg};width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">${c.icon}</div>
-      <div class="cc-info" style="flex:1">
-        <div class="cc-title" style="font-size:16px;font-weight:800;color:#1E1B4B;margin-bottom:2px">${c.title}</div>
-        <div class="cc-sub" style="font-size:12px;color:#6B7280">${c.sub}</div>
+    function renderCareerCards(careerList, isFiltered) {
+        const container = document.getElementById('dash-career-cards');
+        const title = document.getElementById('careers-section-title');
+        title.textContent = isFiltered ? 'Filtered Results' : 'Top Matches For You';
+        if (!careerList || careerList.length === 0) {
+            container.innerHTML = `<div style="text-align:center;padding:32px;color:#9CA3AF;font-size:14px;">No careers found for this filter.</div>`;
+            return;
+        }
+        container.innerHTML = careerList.map(c => `
+    <div class="career-card ${c.top ? 'top' : ''}" onclick="openSearchRoadmap('${c.id || c.title}')">
+      <div class="cc-icon" style="background:${c.bg}">${c.icon}</div>
+      <div class="cc-info">
+        <div class="cc-title">${
+        c.title}</div>
+        <div class="cc-sub">${c.sub}</div>
         <span class="pill ${c.top ? 'pill-green' : 'pill-blue'}">${c.top ? '🔥 Top Match' : 'Strong Match'}</span>
       </div>
-      <div style="font-size:13px;font-weight:800;color:#4F46E5">${c.match}%</div>
-    </div>`).join('');
+      <div class="cc-match">${
+        c.match}%</div>
+    </div>`
+        ).join('');
+    }
 
-  document.getElementById('dash-career-cards').innerHTML = careerHTML;
-}
+    // ════════════════════════════════════════════
+    //  FILTER CHIPS
+    // ════════════════════════════════════════════
+    function filterByCategory(el, cat) {
+        document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        activeFilter = cat;
+        closeSearch();
+        if (cat === 'all') {
+            buildDashboard();
+            return;
+        }
+        const filtered = allCareers
+        .filter(c => c.tags.includes(cat))
+        .map(c => ({
+            ...c,
+            top: false
+        }));
+        renderCareerCards(filtered, true);
+    }
 
-// ════════════════════════════════════════════
-//  ROADMAP
-// ════════════════════════════════════════════
-function buildRoadmap() {
-  const d = userData[selectedType];
-  document.getElementById('roadmap-title').textContent = d.roadmapTitle + ' Roadmap';
-  document.getElementById('roadmap-sub').textContent = d.roadmapSub;
+    // ════════════════════════════════════════════
+    //  ROADMAP (quiz-based)
+    // ════════════════════════════════════════════
+    function buildRoadmap() {
+        const d = userData[selectedType];
+        document.getElementById('roadmap-title').textContent = d.roadmapTitle + ' Roadmap';
+        document.getElementById('roadmap-sub').textContent = d.roadmapSub;
+        document.getElementById('roadmap-timeline').innerHTML = renderTimelineHTML(d.roadmapSteps);
+    }
 
-  const stepsHTML = d.roadmapSteps.map(s => `
+    // ════════════════════════════════════════════
+    //  SEARCH FEATURE
+    // ════════════════════════════════════════════
+    function handleSearch(val) {
+        const q = val.trim().toLowerCase();
+        const clearBtn = document.getElementById('search-clear-btn');
+        const panel = document.getElementById('search-results-panel');
+
+        clearBtn.classList.toggle('visible', val.length > 0);
+
+        if (!q) {
+            panel.classList.remove('open');
+            return;
+        }
+
+        panel.classList.add('open');
+
+        const matches = allCareers.filter(c =>
+        c.title.toLowerCase().includes(q) ||
+        c.sub.toLowerCase().includes(q) ||
+        c.tags.some(t => t.includes(q)) ||
+        c.keywords.some(k => k.includes(q)) ||
+        c.steps.some(s => s.title.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q))
+        );
+
+        const label = document.getElementById('srp-label');
+        label.textContent = matches.length
+        ? `${matches.length} result${matches.length > 1 ? 's' : ''} for "${val}"`
+        : `No results for "${val}"`;
+
+        const list = document.getElementById('srp-list');
+        if (!matches.length) {
+            list.innerHTML = `
+      <div class="srp-empty">
+        <div class="srp-empty-icon">🔍</div>
+        <div class="srp-empty-title">Nothing found</div>
+        <div class="srp-empty-sub">Try "figma", "python", "marketing" or "data"</div>
+      </div>`
+
+
+
+
+            ;
+            return;
+        }
+        list.innerHTML = matches.map(c => `
+    <div class="srp-result" onclick="openSearchRoadmap('${c.id}')">
+      <div class="srp-ico" style="background:${c.bg}">${c.icon}</div>
+      <div class="srp-info">
+        <div class="srp-title">${
+        c.title}</div>
+        <div class="srp-sub">${c.sub} &nbsp;·&nbsp; ${c.match}% match</div>
+      </div>
+      <span class="srp-arrow">→</span>
+    </div>`
+
+
+        ).join('');
+    }
+
+    function doQuickSearch(term) {
+        const input = document.getElementById('skill-search-input');
+        input.value = term;
+        handleSearch(term);
+        input.focus();
+    }
+
+    function showSearchPanel() {
+        const val = document.getElementById('skill-search-input').value;
+        if (val.trim())
+            handleSearch(val);
+    }
+
+    function clearSearch() {
+        document.getElementById('skill-search-input').value = '';
+        document.getElementById('search-clear-btn').classList.remove('visible');
+        document.getElementById('search-results-panel').classList.remove('open');
+    }
+
+    function closeSearch() {
+        clearSearch();
+    }
+
+    // ════════════════════════════════════════════
+    //  SEARCH ROADMAP (from search/filter results)
+    // ════════════════════════════════════════════
+    function openSearchRoadmap(idOrTitle) {
+        closeSearch();
+        // first try allCareers by id
+        let career = allCareers.find(c => c.id === idOrTitle);
+        // fallback: match by title (for quiz-based career cards)
+        if (!career) {
+            career = allCareers.find(c => c.title.toLowerCase() === idOrTitle.toLowerCase());
+        }
+        if (!career) {
+            // last resort: open normal roadmap
+            go('roadmap');
+            return;
+        }
+        document.getElementById('sr-roadmap-title').textContent = career.icon + ' ' + career.title + ' Roadmap';
+        document.getElementById('sr-roadmap-sub').textContent = 'Your step-by-step path to becoming a ' + career.title;
+        document.getElementById('sr-roadmap-timeline').innerHTML = renderTimelineHTML(career.steps);
+        go('search-roadmap');
+    }
+
+    function renderTimelineHTML(steps) {
+        return steps.map(s => `
     <div class="tl-item">
-      <div class="tl-dot ${s.done ? 'done' : ''}"></div>
+      <div class="tl-dot ${
+        s.done ? 'done' : ''}"></div>
       <div class="tl-card ${s.done ? 'done-card' : ''}">
         <div class="tl-step">${s.step}</div>
         <div class="tl-title">${s.done ? '✅ ' : ''}${s.title}</div>
         <div class="tl-desc">${s.desc}</div>
         <div class="tl-tags">${s.tags.map(t => `<span class="tl-tag">${t}</span>`).join('')}</div>
       </div>
-    </div>`).join('');
+    </div>`
 
-  document.getElementById('roadmap-timeline').innerHTML = stepsHTML;
-}
-</script>
+        ).join('');
+    }
+
+    // Close search panel when clicking outside
+    document.addEventListener('click', function(e) {
+        const panel = document.getElementById('search-results-panel');
+        const input = document.getElementById('skill-search-input');
+        if (panel && !panel.contains(e.target) && e.target !== input) {
+            panel.classList.remove('open');
+        }
+    });
+    </script>
 </body>
 </html>
